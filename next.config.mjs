@@ -1,4 +1,29 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
+import createMDX from '@next/mdx';
+import remarkFrontmatter from 'remark-frontmatter';
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 
-export default nextConfig;
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'blog.orels.sh',
+        port: '',
+        pathname: '/content/images/**',
+      },
+    ],
+  },
+  experimental: {
+    mdxRs: true,
+  }
+};
+
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
+    rehypePlugins: [],
+  },
+});
+
+export default withMDX(nextConfig);

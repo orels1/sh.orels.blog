@@ -1,0 +1,10 @@
+{
+  "cSpell.words": [
+    "frontmatter"
+  ],
+  "markdown.copyFiles.destination": {
+    "**/app/_posts/*.mdx": "${documentWorkspaceFolder}/public/img/posts/${documentBaseName}/${documentBaseName}-${fileName}",
+  },
+  "editor.pasteAs.enabled": true,
+  "markdown.copyFiles.overwriteBehavior": "nameIncrementally",
+}

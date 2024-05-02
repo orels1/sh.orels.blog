@@ -1,0 +1,308 @@
+---
+title: '2023 Year in Review'
+created: '2023-12-30'
+tags: [Development, Recap, Unity, Shaders]
+image: 'https://blog.orels.sh/content/images/size/w1200/2023/12/photo-1649290098499-f4148542f2e0.jpeg'
+imageCredit: 'Photo by Rohit Choudhari / Unsplash'
+imageCreditLink: 'https://unsplash.com/@lilrohit'
+---
+
+import Tweet from '@/components/Tweet';
+
+It's time to rewind to the beginning of the year to look at the things I've made and shared, as well as a couple of projects that I haven't talked about publicly before.
+
+---
+
+And if you just want a tl;dr with all the links, [click here to jump to the bottom](https://blog.orels.sh/2023-year-in-review/#tldr).
+
+## January 2
+
+As it often happens - I was working on another personal project over the winter break, so on January 2nd I posted the first announcement of ORL Shaders 6.0.0, a massive rewrite, a whole new generation backend and a bunch new goodies for world and avatar creators alike.
+
+<Tweet tweetId="1609999637250809856" />
+
+## January 15
+
+After watching a bunch of Nintendo Switch Sports gameplay - I felt inspired to make a custom bowling system, not tied to unity physics and pickups. That would be more predictable and enjoyable than anything that's already out there.
+
+<Tweet tweetId="1614421548391170048" />
+
+After a couple of weeks of working on it - I posted a first look.
+
+Unfortunately, as it often happens with side projects, it was never finished. I hit some obstacles that were very hard to overcome with me only having a Quest 2 and a laptop at the time.
+
+Now that I have a full PC and an Index again - I should probably come back to this, as I feel like there is still a big void in the bowling worlds on VRChat.
+
+## January 21
+
+After writing a lot of bowling code - I wanted to relax a bit. But I couldn't play my favorite rhythm game - SDVX, because I couldn't take my controller with me.
+
+So that day - I decided to dive into a world of custom controller creation. I discovered a now-deprecated ViGEm project, which allows you to easily emulate XBox and PS controllers in code.
+
+[ViGEm](https://github.com/nefarius/ViGEm.NET?ref=blog.orels.sh)
+
+Unfortunately, due to some legal disputes over the name and other reasons - the creator decided to move on from that project, leaving the world of controller emulation pretty barren. Thankfully it still works!
+
+After a bit of digging around and trying to find an SDVX iPad controller of some kind - I made a super quick prototype in Unity, which then communicated all the button hits to my PC via OSC and then passed them on to the game via ViGEm.
+
+<Tweet tweetId="1616884619780956163" />
+
+It was janky, but it worked! And I played SDVX like that for a couple of weeks...
+
+...until I finally gave up and ordered a mini SDVX controller which I use to this day!
+
+## January 30
+
+Turns out the very first month of the year was packed with neat little exploration projects.
+
+This was right around Next.js 13 release. If you're unfamiliar, next.js is the most popular React-based web application framework out there. And potentially by itself the most popular way to build modern websites, but I'm not sure if actual numbers are backing that up.
+
+Either way, next 13 introduced a totally new approach to creating applications with it, which finally made me enjoy my time working with it.
+
+To try it out - I rewrote my TLX conference website using this fresh Next 13, TailwindCSS, and Supabase stack, and it became much faster and more cohesive than ever before!
+
+<Tweet tweetId="1619888535196008449" />
+
+I also have another update that moves the website to Next 14 which introduces a bunch of new ways of building things, and I couldn't be more excited. But that's for 2024.
+
+## February 8
+
+Following some things I've seen in VRChat - I got inspired to write a comprehensive guide on improving your in-world camera controls. Especially for Streaming use cases.
+
+The title was a bit pretentious, but I still stand by the premise. If you're doing anything with cameras in VRChat worlds - you should be using Cinemachine. And hopefully, this post showed that it doesn't have to be hard to do either!
+
+[You should probably be using Cinemachine](https://blog.orels.sh/you-should-probably-be-using-cinemachine/)
+
+State-driven cameras are a total game-changer for people who do not feel comfortable dealing with cinemachine via code.
+
+## February 19 🌟
+
+The big date for me in 2023. The day v6.0.0 of my shaders released.
+
+<Tweet tweetId="1627383929488515073" />
+
+I didn't make a big fancy trailer for it. I was so exhausted from working on this rewrite for a couple of months in a row - I just pushed it out of the door.
+
+So if I could go back - I'd just take a break for a week or so and give this update the media wrapping it deserved.
+
+It's hard to underestimate how much this changed how I work with shaders and how I help others with their shader needs. The new generation system made it possible for me to write a new bespoke shader effect with PBR, Toon, or no shading in literal seconds. And it only grew from there.
+
+I'll talk about it later in this post, but with the new setup - I am now able to create new effects daily if I have the ideas and motivation for it.
+
+In the end, these are the shaders that ended up powering worlds like [Complex 7](https://vrchat.com/home/world/wrld_ff414a30-31e3-44bb-9c8e-3d721e895b0b?ref=blog.orels.sh), my own [DevBox](https://vrchat.com/home/world/wrld_c336b682-d731-41c0-947e-3ed59bb3a9aa?ref=blog.orels.sh), [Lighthouse In The Snow](https://vrchat.com/home/world/wrld_47948cbd-b114-4360-b50d-0a3ccaa442d9?ref=blog.orels.sh), and the just-released [Gion Street](https://vrchat.com/home/world/wrld_d048292b-42ad-4204-9372-0103d9a46f71?ref=blog.orels.sh) update! There are many more that I might not even know about because 2023 was also a year I met the most people who use the shaders I make, which feels incredible every time.
+
+_So if you randomly see me somewhere and you have used my stuff, please come up and say hi! Especially if you have any ideas or other feedback to share 🙏_
+
+And if you're looking for some great shaders, grab them here!
+
+[orels Unity Shsaders](https://shaders.orels.sh/?ref=blog.orels.sh)
+
+## April 3
+
+While I was hoping to release more worlds, Lighthouse In The Snow ended up being my only newly published world in 2023. It was my very first experience with raymarchers and I'm pretty happy with how it turned out.
+
+<Tweet tweetId="1642653091131473920" />
+
+[You can check out Lighthouse In The Snow right here, on PC and Android.](https://vrchat.com/home/world/wrld_47948cbd-b114-4360-b50d-0a3ccaa442d9?ref=blog.orels.sh)
+
+## April 17
+
+After a lot of extra polish and writing the most unique shaders I ever had written before - the v6.1.0 was released.
+
+While a minor number bump - it was a much more significant update when it comes to new things the world and avatar creators were now able to play with.
+
+<Tweet tweetId="1647734247539482624" />
+
+<div style={{ position: 'relative', paddingTop: '56.25%', marginTop: '2rem', marginBottom: '2rem', borderRadius: '12px', overflow: 'hidden' }}><iframe src="https://iframe.mediadelivery.net/embed/165/41a40b87-5036-4c41-9b19-545d055deb56?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style={{ border:0, position: 'absolute', top: 0, height: '100%', width: '100%'}} allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowFullScreen></iframe></div>
+
+This was the proof that the whole new generation backend was absolutely worth it.
+
+I also experimented with Dual Relief-mapped shader for fake interiors based on this great presentation by folks from Epic Games
+
+<div style={{position: 'relative', height: '0', paddingTop: '56%', overflow: 'hidden', maxWidth: '100%', marginTop: '2rem', marginBottom: '2rem', borderRadius: '12px', overflow: 'hidden' }}>
+  <iframe style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} src="https://www.youtube.com/embed/xLVJP-o0g28" frameBorder="0" allowFullScreen></iframe>
+</div>
+
+My solution is much simpler, but its surprisingly performant even at VR resolutions, and a cut down version of this fake interior shader eventually made its way into Complex 7 world I will talk about a bit later in this post.
+
+[Demo Mastodon Post](https://mastodon.gamedev.place/@orels1/110212561455021460?ref=blog.orels.sh)
+
+<div style={{ position: 'relative', paddingTop: '56.25%', marginTop: '2rem', marginBottom: '2rem', borderRadius: '12px', overflow: 'hidden' }}><iframe src="https://iframe.mediadelivery.net/embed/165/b1faa103-2c97-4849-b7ba-e9dc6e5862ab?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style={{ border:0, position: 'absolute', top: 0, height: '100%', width: '100%'}} allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowFullScreen></iframe></div>
+
+## May
+
+May was a pretty uneventful side project and work-wise. It was the time of a big holiday break which I enjoyed to the fullest. After 3 years of lockdowns - I finally traveled to the US again and visited Mexico for the first time, it was a ton of fun.
+
+The only notable thing I could find was this little shader I was making as an attempt to do something for VJs. I have lots to learn still, but I still hope to bring a cool realtime VJ pack to my shaders.
+
+<div style={{ position: 'relative', paddingTop: '56.25%', marginTop: '2rem', marginBottom: '2rem', borderRadius: '12px', overflow: 'hidden' }}><iframe src="https://iframe.mediadelivery.net/embed/165/e6727ff7-5aca-4f77-bdf1-6e52d9104edd?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style={{ border:0, position: 'absolute', top: 0, height: '100%', width: '100%'}} allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowFullScreen></iframe></div>
+
+## June
+
+June was very exciting at work. So much so that I again didn't have much to share publicly.
+
+Although I did experiment with an [Ambient.cg material library](https://ambientcg.com/?ref=blog.orels.sh) integration for my shaders at some point. I want to revisit this in 2024 and potentially add it as a full feature to my shader inspectors. Bringing great PBR materials closer to creators
+
+<div style={{ position: 'relative', paddingTop: '140.25%', marginTop: '2rem', marginBottom: '2rem', borderRadius: '12px', overflow: 'hidden' }}><iframe src="https://iframe.mediadelivery.net/embed/165/f6833cda-0904-43ee-9cb6-6e8360f11da4?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style={{ border:0, position: 'absolute', top: 0, height: '100%', width: '100%'}} allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowFullScreen></iframe></div>
+
+## July
+
+While I don't have explicit dates for these - I was pretty busy with a bunch of little projects in July. The first and the main one being the Woodcutting world.
+
+After playing a lot of New World in the summer - I got obsessed with woodcutting as a meditative repetitive process that just put me at ease. I wanted to capture it in VRChat by making a woodcutting-only world of my own.
+
+And while I was able to finish the core setup for it - the progression is still to be done, and thus the world is not out yet.
+
+<Tweet tweetId="1681493414251229184" />
+
+---
+
+I also made a neat little shader for a friend's hat.
+
+<div style={{ position: 'relative', paddingTop: '120.25%', marginTop: '2rem', marginBottom: '2rem', borderRadius: '12px', overflow: 'hidden' }}><iframe src="https://iframe.mediadelivery.net/embed/165/775b629c-3905-41a6-bf42-509ef2d456d1?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style={{ border:0, position: 'absolute', top: 0, height: '100%', width: '100%'}} allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowFullScreen></iframe></div>
+
+---
+
+I also attempted to revive another older world of mine - Summer Tower. It got a full rewrite of its lighting system and a migration from Udon Graph to Udon Sharp. But seems like it will have to wait for the next summer. Hopefully, I can publish it in 2024.
+
+![Summer Tower](/img/posts/2023-year-in-review/2023-year-in-review-image.png "Summer Tower")
+
+## August 9
+
+After a pretty slow summer - it was time to get back to the shader work, and release one of the most requested features thus far: puddles.
+
+<Tweet tweetId="1688219679347585025" />
+
+While the full 6.2.0 release would come later - this marked the final step of all my work up to that point. And while the shader itself is fairly simple - I'm super proud of all the cool effects you can achieve with it!
+
+<div style={{ position: 'relative', paddingTop: '48.25%', marginTop: '2rem', marginBottom: '2rem', borderRadius: '12px', overflow: 'hidden' }}><iframe src="https://iframe.mediadelivery.net/embed/165/198c68d6-52e9-4a6b-b01c-5a97c519605a?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style={{ border:0, position: 'absolute', top: 0, height: '100%', width: '100%'}} allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowFullScreen></iframe></div>
+
+## August 21
+
+The actual 6.2.0 release, with a bunch of new visual effects to make worlds more dynamic and a way to build custom shaders out of existing modules.
+
+<Tweet tweetId="1693360711194317288" />
+
+A creator I admire and look up to - Lakuza, even ended up using those in his upcoming Bullet Time Agent world! Which was awesome to see. There is no better feeling for a tool creator than seeing their tools being used ❤️
+
+<Tweet tweetId="1694458386757136631" />
+
+## September
+
+In September I was mostly jumping around various tools to make world creation easier for my friends.
+
+Out of all of them - only one is probably worth mentioning - the "Decal" mesh projection tool. I hope I can pack it up for a proper release in 2024.
+
+The idea is simple - take a mesh of some kind and project it onto a surface in front of it. Be it a flat wall or a very complex piece of furniture
+
+<div style={{ position: 'relative', paddingTop: '101.25%', marginTop: '2rem', marginBottom: '2rem', borderRadius: '12px', overflow: 'hidden' }}><iframe src="https://iframe.mediadelivery.net/embed/165/393529ba-4f7d-4819-a93a-771893ac87cb?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style={{ border:0, position: 'absolute', top: 0, height: '100%', width: '100%'}} allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowFullScreen></iframe></div>
+
+The rest of my time that month was taken by Starfield 😓 and looking at other game engines due to Unity's questionable business choices.
+
+I summarized my experience with Unigine and CryEngine here if you're interested:
+
+[Other Engines part 1](https://mastodon.gamedev.place/@orels1/111087700939189872?ref=blog.orels.sh)
+
+[Other Engines part 2](https://mastodon.gamedev.place/@orels1/111098952850572003?ref=blog.orels.sh)
+
+They both had interesting tech, but neither felt like a good unity replacement. Although CryEngine is more or less abandonware at this point, while Unigine seems like it could eventually be a pretty good Unity alternative.
+
+## October
+
+The majority of my time in October was filled with just WORK things. It was the time of getting ready for Unity 2022 to become the main VRChat unity version, which involved upgrading a lot of my projects to 2022 to be used as test subjects.
+
+During that time I also went back to my TLX world to fix it up and migrate it to Unity 2022, in preparation for TLX 2024 👀
+
+A part of that was fixing and improving the [ShaderMotion](https://gitlab.com/lox9973/ShaderMotion?ref=blog.orels.sh) playback in the talk archives.
+
+<div style={{ position: 'relative', paddingTop: '56.25%', marginTop: '2rem', marginBottom: '2rem', borderRadius: '12px', overflow: 'hidden' }}><iframe src="https://iframe.mediadelivery.net/embed/165/b917693e-2028-4346-96cc-bf53d334eefc?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style={{ border:0, position: 'absolute', top: 0, height: '100%', width: '100%'}} allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowFullScreen></iframe></div>
+
+---
+
+I also discovered a nifty little WinUI component library for WPF called WPF UI during that time.
+
+[WPF UI](https://wpfui.lepo.co/?ref=blog.orels.sh)
+
+And upgraded my personal Avatar OSC app to use it instead of the native Win UI. Which gave me better performance, more control, and way simpler installation/distribution setups.
+
+<div style={{ position: 'relative', paddingTop: '56.25%', marginTop: '2rem', marginBottom: '2rem', borderRadius: '12px', overflow: 'hidden' }}><iframe src="https://iframe.mediadelivery.net/embed/165/45f30ce6-0dcd-4340-854b-f11f13d61e0a?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style={{ border:0, position: 'absolute', top: 0, height: '100%', width: '100%'}} allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowFullScreen></iframe></div>
+
+At this point, the app grew quite a bit, and supports OSCQuery, Spotify, Weather passing, SteamVR integration, and more.
+
+I hope I can make the codebase public at some point, so people can use this as a basis for their own VRChat OSC development!
+
+## November
+
+November was a very busy month both at work and with personal projects.
+
+Complex 7 world was nearing its completion, but it was lacking a crucial piece - some kind of music system. The world is very large and contains many different areas with a lot of different music. Some of it is localized, some of it is done in 3D space since the sources of audio are represented in the real space, some need to loop, and some need to pause. It was clear that a haphazard approach wouldn't cut it.
+
+So I embarked on making a Music System that could both satisfy all of Complex 7's requirements and also be generic enough to be used by anyone else.
+
+While I haven't promoted it at all this year due to not having time to give it proper coverage - it is out now and you can use it!
+
+[orels Music System](https://musicsystem.orels.sh/?ref=blog.orels.sh)
+
+On November 4th - Complex 7 was finally released by Fins, which is, to me, the most impressively dense world in VRChat. [You should check it out!](https://vrchat.com/home/world/wrld_ff414a30-31e3-44bb-9c8e-3d721e895b0b?ref=blog.orels.sh)
+
+<div style={{position: 'relative', height: '0', paddingTop: '56%', overflow: 'hidden', maxWidth: '100%', marginTop: '2rem', marginBottom: '2rem', borderRadius: '12px', overflow: 'hidden' }}>
+  <iframe style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} src="https://www.youtube.com/embed/eI5YCip44gQ" frameBorder="0" allowFullScreen></iframe>
+</div>
+
+## December 11
+
+Big day! Together with a couple of VRChat friends - the TLX 2024 Attendee Survey was released. Along with the very first teaser of the event.
+
+<Tweet tweetId="1734007675808096690" />
+
+I cannot wait to work on TLX in 2024, but for now, I need to focus on doing proper pre-production instead of doing it all on the fly.
+
+This also coincided with me starting to revamp the website using Next.js 14 and the new server actions tech they added for writing the backend directly in React code.
+
+But that's as much as I can say atm. Exciting things are coming!
+
+## December 25
+
+After so many months and years of thinking about it - I finally started a "cool things I found" series. Or at least I hope it will be a proper series. For now it is just a single post. If you enjoy little titbits of knowledge as much as I do, please take a look 🙏
+
+[Items of Interest #1](https://blog.orels.sh/items-of-interest-1/)
+
+## December 26
+
+And right the next day I posted what turned out to be my most viral thread of the year. Everyone loves pretty lights, I suppose.
+
+<Tweet tweetId="1739411733893001246" />
+
+The gist is simple: Unity 2022 fixes a bug that haunted every project that attempted to use Realtime GI together with any non-Enlighten lightmapping.
+
+As soon as the scene would start playing - all of the lightprobes would get set to black and never update (outside of very rare cases where it wouldn't). That basically made Unity's native RTGI useless for most people who weren't willing to deal with long bake times.
+
+But in Unity 2022 - this is no longer a problem. And we can combine incredible realtime GI systems [like LTCGI](https://ltcgi.dev/?ref=blog.orels.sh) with actual realtime-updated lightprobes now. Which brings best of the both worlds to VRChat.
+
+This also seems to have sparked a new wave of interest in RTGI overall. Which is much more viable to use on modern hardware compared to 3-4 years ago. Check out this world, the reactive lighting looks awesome!
+
+<Tweet tweetId="1740172318134182152" />
+
+Can't wait to see all the other cool things people make with RTGI of some kind ❤️
+
+## TL;DR
+
+For those who just wanted to jump to all the useful links, here you go:
+
+- [My shader package](https://shaders.orels.sh/?ref=blog.orels.sh)
+- [Music System for worlds used in Complex 7](https://musicsystem.orels.sh/?ref=blog.orels.sh)
+- [ViGEm controller emulation](https://github.com/nefarius/ViGEm.NET?ref=blog.orels.sh)
+- [My Lighthouse In The Snow world released this year](https://vrchat.com/home/world/wrld_47948cbd-b114-4360-b50d-0a3ccaa442d9?ref=blog.orels.sh)
+- [You should be using Cinemachine blog post](https://blog.orels.sh/you-should-probably-be-using-cinemachine/)
+- [Items of Interest #1](https://blog.orels.sh/items-of-interest-1/)
+- [TLX 2024 Attendee Survey](https://l.tlx.dev/2024-interest-survey?ref=blog.orels.sh)
+- [WPF UI: WinUI components for WPF](https://wpfui.lepo.co/?ref=blog.orels.sh)
+- [ShaderMotion system](https://gitlab.com/lox9973/ShaderMotion?ref=blog.orels.sh)
+- [Thoughts on Unigine game engine thread](https://mastodon.gamedev.place/@orels1/111087700939189872?ref=blog.orels.sh)
+- [Thoughts on CryEngine thread](https://mastodon.gamedev.place/@orels1/111098952850572003?ref=blog.orels.sh)
+- [Dual Relief-mapped shader used in Matrix Awakens demo](https://youtu.be/xLVJP-o0g28?t=2355&ref=blog.orels.sh)
+- [Using Unity RTGI for lightprobes only guide](https://twitter.com/orels1_/status/1739411733893001246?ref=blog.orels.sh)
+
+## And that's a wrap!
+
+And that is the end of 2023. It is December 30th as I write this summary. Looking back at 2023 - it wasn't too bad. I wish I did more, as usual, but it was nice to go back and remember all of the things that actually did happen this year one way or another. I hope I can come back to a lot of these projects and give them the time they deserve, so come back next year to see if I did 😅
