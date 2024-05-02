@@ -5,6 +5,12 @@ import path from 'node:path';
 import Tweet from '@/components/Tweet';
 import { compileMDX, MDXRemote } from 'next-mdx-remote/rsc';
 import Image from 'next/image';
+import { LinkIcon } from 'lucide-react';
+import rehypeSlug from 'rehype-slug';
+import rehypePrism from '@mapbox/rehype-prism';
+import BunnyVideo from '@/components/BunnyVideo';
+import YouTube from '@/components/YouTube';
+import LinkEmbed from '@/components/LinkEmbed';
 
 
 export async function generateStaticParams()
@@ -22,16 +28,21 @@ export async function generateStaticParams()
 }
 
 const components = (slug: string) => ({
-  h1: (props: any) => <h1 className="" {...props} />,
-  h2: (props: any) => <Link href={`/${slug}/#${props.id}`} className="no-underline" scroll><h2 {...props} /></Link>,
-  h3: (props: any) => <Link href={`/${slug}/#${props.id}`} className="no-underline" scroll><h3 {...props} /></Link>,
-  h4: (props: any) => <Link href={`/${slug}/#${props.id}`} className="no-underline" scroll><h4 {...props} /></Link>,
+  h1: (props: any) => <h1 className="hover:text-accent-foreground" {...props} />,
+  h2: (props: any) => (
+    <Link href={`/${slug}/#${props.id}`} className="no-underline hover:text-accent-foreground transition-colors [&_h2]:hover:text-accent-foreground [&_h2]:transition-colors group flex items-center" scroll>
+      <h2 {...props}  />
+      <LinkIcon size={18} className="hidden group-hover:flex relative top-[11px] ml-3" />
+    </Link>
+  ),
+  h3: (props: any) => <Link href={`/${slug}/#${props.id}`} className="no-underline hover:text-accent-foreground transition-colors [&_h3]:hover:text-accent-foreground [&_h3]:transition-colors group flex items-center" scroll><h3 {...props} /></Link>,
+  h4: (props: any) => <Link href={`/${slug}/#${props.id}`} className="no-underline hover:text-accent-foreground transition-colors [&_h4]:hover:text-accent-foreground [&_h4]:transition-colors group flex items-center" scroll><h4 {...props} /></Link>,
   pre: (props: any) => <pre {...props} className={cn(props.className, "rounded-md my-4")} />,
   blockquote: (props: any) => <blockquote {...props} className={cn(props.className, "ring-inset ring-1 ring-white/10 bg-white/10 rounded-md px-4 my-4 py-[1px]")} />,
   p: (props: any) => <p {...props} className={cn(props.className, "")} />,
   ul: (props: any) => <ul {...props} className={cn(props.className, "")} />,
   li: (props: any) => <li {...props} className={cn(props.className, "")} />,
-  a: (props: any) => <Link {...props} className={cn(props.className, "no-underline hover:underline underline-offset-2")} />,
+  a: (props: any) => <Link {...props} className={cn(props.className, "hover:text-accent-foreground no-underline hover:underline underline-offset-2")} />,
   img: (props: any) => (
     <span className="flex items-center flex-col my-4">
       <img {...props} className={cn(props.className, "rounded-md mb-2")} />
@@ -40,7 +51,10 @@ const components = (slug: string) => ({
       </span>
     </span>
   ),
-  Tweet
+  Tweet,
+  BunnyVideo,
+  YouTube,
+  LinkEmbed,
 });
 
 export default async function Page({
@@ -77,10 +91,18 @@ export default async function Page({
             <Link href={mdx.frontmatter.imageCreditLink ?? '#'} target="_blank" className="hover:underline underline-offset-2">{mdx.frontmatter.imageCredit}</Link>
           </div>
         )}
-        <div className="prose prose-invert">
+        <div className="prose prose-invert prose-lg">
           <MDXRemote
             source={content}
-            options={{ parseFrontmatter: true }}
+            options={{ 
+              parseFrontmatter: true,
+              mdxOptions: {
+                rehypePlugins: [
+                  rehypeSlug,
+                  rehypePrism,
+                ]
+              }
+            }}
             components={components(slug)}
           />
         </div>

@@ -15,7 +15,7 @@ const content = [
   },
   {
     title: 'Items of Interest #1',
-    slug: '2023-year-in-review',
+    slug: 'items-of-interest-1',
     id: 1,
     tags: ['Game Design'],
     exceprt: 'From game design references, interesting shader tricks, and articles worth reading, to more in-depth thoughts and opinions',

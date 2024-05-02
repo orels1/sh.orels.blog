@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import './prism-duotone-dark.css';
 import "./globals.css";
 import Link from "next/link";
 
