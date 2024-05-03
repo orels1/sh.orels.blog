@@ -11,6 +11,10 @@ li>code {
   font-size: 0.9rem;
 }
 
+:root {
+  color-scheme: light dark;
+}
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -27,16 +31,6 @@ li>code {
     border-radius: 0.3rem;
     font-size: 0.9rem;
   }
-}
-
-body {
-  /* color: var(--foreground-rgb); */
-
-  /* background: linear-gradient(to bottom,
-      transparent,
-      var(--background-end-rgb)) var(--background-start-rgb); */
-
-  /* background: var(--background-start-rgb); */
 }
 
 pre {
