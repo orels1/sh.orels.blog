@@ -1,0 +1,206 @@
+---
+title: 'Why do you need a Shader Generator and how ModularShaderSystem is here to help'
+tags: ['Shaders', 'Unity', 'Development', 'Code']
+created: '2022-05-27'
+updated: '2024-05-03'
+image: 'https://blog.orels.sh/content/images/size/w1200/2022/05/mss-post-header.png'
+imageCredit: 'Original Photo by Simon Wilkes / Unsplash, butchered by yours truly'
+imageCreditLink: 'https://unsplash.com/@simonfromengland?utm_source=ghost&utm_medium=referral&utm_campaign=api-credit'
+excerpt: Developing complex Unity Shaders is hard. Can you make your life easier? Maybe! Let's look into the issues of vanilla shader development and how can we sidestep some of those with Shader Generation
+---
+
+Developing complex Unity Shaders is hard. Can you make your life easier? Maybe! Let's look into the issues of vanilla shader development and how can we sidestep some of those with Shader Generation
+
+---
+
+## Who is this article for?
+
+If you are a Unity Shader Developer who is tired of juggling dozens of .cginc files, and just wants something that has the utility of includes, but does it better and in a much more flexible and controlled way - this one is for you...
+
+...on the other hand, if you are just starting with shader development and/or primarily make Surface or Unlit shaders using the built-in Unity flows, this one might look a bit over the top.
+
+With that out of the way, let's start with the basics. What is the problem with vanilla Unity shader development.
+
+## Issues with complex shader development
+
+When creating complex, especially PBR/Toon shaders - Unity has very limited mechanisms for making your life easier. There are generally two ways of doing things
+
+- Using Surface Shaders in combination with custom lighting functions to customize the final look of the material.
+- Splitting your shader in a bunch of `.cginc` files like `Defines`, `Fragment`, `Vertex`, `Lighting` etc., which allows you to then include them in the main .shader file to create the final code.
+
+Both of those ways have their issues, let's start with surface shaders.
+
+## Why Surface Shaders aren't great
+
+![Trash](https://media1.tenor.com/m/AVeWTGaaNPcAAAAC/ron-swanson-parks-and-recreation.gif)
+
+Surface Shaders in Unity are, essentially, a big pile of code generation created way back in the happy days of just a single render pipeline.
+
+The idea is to have a nice high-level wrapper, which allows shader creators to simply define surface parameters like Albedo, Smoothness, Metalness, etc, while leaving the actual lighting calculations to Unity itself. They even have the ability to define their own custom lighting function!
+
+While great on paper, Surface Shaders fell victim to one simple problem - neglect. While they technically work - they do not support any of the new rendering pipelines, they use the PBR calculations from very early days of unity, and can take ages to compile. That's not even mentioning all the odd bugs due to the "magic" nature of them.
+
+Beyond that - googling answers for Surface Shaders is really hard because they use a very odd way of doing things, once again - relying on magic names and directives. So often googling how to do X, you'll find answers that are only suitable for regular Vert/Frag shaders, and if you don't know how those translate to Surface Shader syntax - you might just be out of luck.
+
+<ZoomImage title="And Surface Shaders don't even go pink!" src="/img/posts/creating-a-custom-shader-generation-system-with-mss-and-scriptedimporters/image.png" />
+
+That results in Surface Shaders being considered more pain than they are worth for anything beyond some simple effects for most people. Or even worse - the arcane nature of them actively deters people from using code-based shaders, or shaders in general. And that's just too tragic.
+
+## Why is a pile of `.cginc` files not the best way to do things either
+
+![Chaos](https://media1.tenor.com/m/_OCVuSjrggcAAAAC/chaos-fire.gif)
+
+Don't get me wrong, splitting a complex shader into multiple `.cginc` files is much better than copy pasting the same code 4 times for each pass, only to have to do it again and again every time you want to change something.
+
+But the problem arises from cases where you finally built your awesome new Google Filament based PBR shader, with all the bells and whistles, and suddenly you hit an actual game-logic related techart task: make a shader that has a little rimlight to highlight the object (if its like an in-game pickup, for example), with controls for the color, intensity and maybe pulsing amount/speed of that rimlight.
+
+The usual way of solving that problem is by copying your main shader, adding some new properties, and then, if you planned ahead, adding some extra code to this new file, copying that code to any extra passes if needed, and calling it a day.
+
+Doesn't seem too terrible, but now you have two shaders hard-tied to the same `.cginc` files. Which means that, first, you either can't move the shader, or the cginc files anywhere, as you can only use relative or absolute paths hard coded in the shader code. And second - if any of your customized shaders require changing some base level functionality, like inserting something into the lighting function for a special VFX thing, or getting some more data from the vertex step, etc - you either need to have it in your base files, which can end up Uber-ifying your shader, or you suddenly need to duplicate all of the .cginc files. And now you have a diverged codebase, which is just pain no matter how you look at it.
+
+<ZoomImage alt="Unity Development Rainbow" src="/img/posts/creating-a-custom-shader-generation-system-with-mss-and-scriptedimporters/image-1.png" />
+
+This also ignores the fact that distributing shaders which rely on many external files is a bit non-trivial, e.g., Unity doesn't detect the `.cginc` files as dependencies, and thus you need to think about your directory structure beforehand, or a custom editor script which grabs all of the files automatically will need to be made, which might not be too big of a deal, but it is nice to be able to package it all in one file for ultimate portability.
+
+## Solving the problem
+
+Now that we sorted that out, let's think about possible solutions. First, let's figure out what are the requirements. We need a system, which
+
+- Would allow creation of many varied shaders from a single base
+- Would provide simple ways of customizing the said base
+- Would provide a simple interface for the shader creator to perform daily techart/VFX tasks
+- Would be modular and extendable by design
+- Would be abstracted from the specific pipelines and rendering paths
+
+If you follow the Unity Shader development space, you probably already have the name "BetterShaders" circling in your head for some time.
+
+And it is true, the system built by Jason Booth covers a lot of the things listed above. Unfortunately, in my opinion it does have 2 major limiting factors:
+
+- It is pretty cumbersome to modify the original shader base, e.g., when you want to create a new lighting function for your shaders. You also can't really add extra options that follow the BetterShader's own semantics nicely, and have to invent your own wheel using the pipeline adapters and a bunch of plaintext files
+- It is fairly pricy for it to gain mass adoption and be recommended to everyone. You can't just "Just use BetterShaders" when it costs $80 per license.
+
+Both of those are fairly unfortunate, and while which one is more important is ultimately up to the individual, I think either of those can be a dealbreaker to some. It certainly is to me. While I managed to work around the first one and get the results I like - it wasn't a great experience and I wouldn't want to maintain that solution on a daily bases.
+
+> An important note here, since the writing of this article Jason Booth made the older version of Better Shaders free! It is an amazing tool and you should definitely check it out if you are looking for an easy to use shader generation system, and the limited customization doesn't bother you.
+
+The second one also undoubtedly a blocker for many up-and-coming developers too.
+
+Thankfully, there is another way! 1k words in - we are finally getting to the topic of this article - ModularShaderSystem.
+
+![Just get to the point](https://media1.tenor.com/m/rh6CuZayRkYAAAAC/just-get-to-it-would-ya-danny-devito.gif)
+
+## So what is it?
+
+> ModularShaderSystem is a Free and Open Source shader generation framework which allows you, as a developer, to control the whole flow of how your shader is made. Which means that it can be used to create any kind of shader, no strings attached
+
+As a result it basically covers both of the issues we had with BetterShaders.
+
+## How does MSS work
+
+While MSS doesn't really call itself a framework, in my opinion - it is exactly that. It is a set of tools to build your own shader generation pipeline without having to figure out file formats, importing flows, asset reference and so on.
+
+I won't get too deep into the "how to make a shader" of MSS, [there is a proper step-by-step guide on their github repo](https://mss.vrlabs.dev/guides/GettingStarted.html?ref=blog.orels.sh), but the general flow of making an MSS-Based shader goes something like this
+
+- Make a ModularShader asset which will be creating your final `.shader` file Unity can use
+- Write a base template which defines the general shader structure: things like Passes, Tags, Defines, Includes and so on. Basically the skeleton of your shader
+- Write templates to be included inside of that skeleton. Where Templates are pretty much .cginc files which exists as regular unity assets, and thus are not tied to the hardcoded paths.
+- Create Modules, which are collections of templates, functions and properties to be included in the final shader file. Usually a module defines all the necessary code and variables/properties for a single shader feature
+
+When all of the above is done - you now have a totally custom shader generation pipeline that only does exactly what you need it to! Clicking Generate Shader kicks off a process which assembles everything defined in all the modules and templates - and inserts it into the skeleton file, resulting in one singular `.shader` with everything inlined. Ready to distribute.
+
+Modifications are simple too. Want to add a new pass? Just modify the base template. Want to develop a new feature - create a module and either included in the main ModularShader or duplicate it and add the module to the new variant. Modules can also be conditional if you're into the whole Uber Shader with a bunch of optional toggles flow.
+
+You can also utilize the built in variant creation functionality to create multiple shader from one ModularShader file, with different modules included.
+
+While it can be a bit intimidating - all it takes is a couple hours to create a base, after that you can just get on with making any amount of shaders you need, without the pains of tracking and managing dozens of `.cginc` files.
+
+_I swear I don't hate `.cgincs` as a concept, I just feel they are not ideal for what we're trying to do here._
+
+And so I really encourage everyone who is facing the same issues I am to check out MSS.
+
+## Did we solve it?
+
+And thus the Shader Development Land has been saved! And everyone went home and coded happily ever after... or did they?
+
+While MSS is an amazing system... to me, as a person who likes typing code instead of clicking buttons in the UI - MSS had one crucial flaw. You have to do all of the wiring up of modules and template - in the Unity Editor itself. And while those aren't too hard to deal with - the Properties are what really became a dealbreaker for me.
+
+BetterShaders, turns out, still had one last trick up its sleeve - it was seamless. Due to it being built completely as a single-file ScriptedImporter-based solution - all you needed to do is make a new `.surfshader` file and start coding.
+
+Meanwhile setting up a base shader in MSS, or even a module - requires managing ScriptableObjects inside of the Unity Editor and a lot of clicking and drag & dropping.
+
+Which isn't too bad when you get to individual customized shaders, since its rare to have modules that define like 30 different properties.
+
+But when you're initially making your base setup - it can get daunting fast, especially if you have a lot of properties that are used for UI, like I do.
+
+## How to never leave your lovely IDE
+
+That basically became my ultimate question for the past couple months.
+
+I didn't want to go back to BetterShaders, because the power and flexibility of MSS was too appealing. But I wanted the ease of use and IDE-only flow of BetterShaders back.
+
+So as any developer does - I went and made my own thing! Ha-ha!
+
+Since I'm terrible with names - I called it `ORLShaderDefinition` and it allows you to write something like this in an `.orlshader` file
+
+```hlsl
+#S#Settings
+Name "SHADER NAME"
+Author "Your Name"
+Version "1.0.0"
+Template "ORL PBR Template.stemplate"
+
+#S#Includes
+"ORL Utility Functions.asset"
+"self"
+"ORL PBR Module.asset"
+
+#S#Properties
+_MainTex("Albedo", 2D) = "black" {}
+
+#S#FragmentVariables
+float4 _MainTex_ST;
+
+TEXTURE2D(_MainTex);
+SAMPLER(sampler_MainTex);
+
+#T#FragmentFunction
+void MyFragment() {
+  half2 uv = d.uv0.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+  half3 albedo = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv).rgb;
+
+  o.Albedo = albedo;
+  o.Emission = (sin(_Time.y) + 1) / 2;
+}
+```
+
+To get a fully working PBR shader with albedo and emission defined explicitly for the task at hand.
+
+Here's a little video demo too.
+
+<YouTube id="jrYtV0yQPbs" />
+
+If you want to learn more about that - check out the next blogpost in this... series? group? I'll drop a link here when that is written.
+
+### Updated May 3rd 2024
+
+Since I wrote this article - I have made my own fully text-based generator system which I have been using and distributing for almost a year now.
+
+If you're interested in this concept - I encourage you to check it out!
+
+<LinkEmbed
+  url="https://shaders.orels.sh/?ref=blog.orels.sh"
+  title="orels Unity Shaders"
+  description="A collection of practical Unity shaders for your next project"
+  site="orels.sh"
+  author="orels"
+/>
+
+## Useful Links
+
+- [ModularShaderSystem](https://github.com/VRLabs/Modular-Shader-System?ref=blog.orels.sh)
+- [BetterShaders](https://assetstore.unity.com/packages/tools/visual-scripting/better-shaders-standard-urp-hdrp-187838?ref=blog.orels.sh)
+- [My shader collection](https://github.com/orels1/orels-Unity-Shaders?ref=blog.orels.sh)
+- [My WIP ORLShaderDefinition branch](https://github.com/orels1/orels-Unity-Shaders/tree/v5.x)
+- [My Knowledge Base](https://tips.orels.sh/?ref=blog.orels.sh)
+
+_Happy shading_

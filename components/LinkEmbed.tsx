@@ -19,19 +19,19 @@ export default function LinkEmbed({
 }) {
   return (
     <Link href={url} target="_blank" className="no-underline">
-      <div className="ring-1 group ring-inset ring-white/10 rounded-xl overflow-hidden flex bg-white/10 my-4">
+      <div className="ring-1 group ring-inset dark:ring-white/10 ring-zinc-300 rounded-xl overflow-hidden flex dark:bg-white/10 bg-zinc-300/10 my-4">
         <div className="flex flex-col grow justify-between gap-2 p-4">
-          <div className="text-xl font-bold group-hover:text-accent-foreground">
+          <div className="text-xl font-bold dark:group-hover:text-sky-500 group-hover:text-sky-600">
             {title}
           </div>
           {description && (
-            <div className="text-sm text-slate-400 font-light leading-6">
+            <div className="text-sm dark:text-slate-400 text-slate-600 dark:font-light leading-6">
               {description}
             </div>
           )}
           <div className="flex items-center gap-4 text-sm">
             <div>{site}</div>
-            <div className="bg-white rounded-full w-[4px] h-[4px]" />
+            <div className="dark:bg-white bg-zinc-800 rounded-full w-[4px] h-[4px]" />
             <div>{author}</div>
           </div>
         </div>

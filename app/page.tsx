@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import dayjs from "dayjs";
 import { LinkIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -39,6 +40,15 @@ const content = [
     tags: ['Code', 'Development', 'Shaders', 'Unity', 'ScriptedImporters'],
     exceprt: 'In this article we\'ll look into what they are and how you can use them to create a procedural Texture Generator',
     image: 'https://blog.orels.sh/content/images/size/w1200/2022/06/Scripted-Importers-pt1.png',
+  },
+  {
+    title: 'Why do you need a Shader Generator and how ModularShaderSystem is here to help',
+    slug: 'creating-a-custom-shader-generation-system-with-mss-and-scriptedimporters',
+    id: 4,
+    created: '2022-05-27',
+    tags: ['Shaders', 'Unity', 'Development', 'Code'],
+    exceprt: 'Developing complex Unity Shaders is hard. Can you make your life easier? Maybe! Let\'s look into the issues of vanilla shader development and how can we sidestep some of those with Shader Generation',
+    image: 'https://blog.orels.sh/content/images/size/w1200/2022/05/mss-post-header.png',
   }
 ]
 
@@ -49,9 +59,11 @@ export default function Home() {
       <h2 className="text-md font-light text-secondary-foreground">...and you read them</h2>
       <div className="grid grid-cols-3 mt-6 gap-6">
         {content.map((post) => (
-          <div key={post.id} className="rounded-xl ring-1 ring-white/10 p-4 flex flex-col gap-4">
+          <div key={post.id} className="rounded-xl ring-1 dark:ring-white/10 ring-zinc-300 p-4 flex flex-col gap-4">
             <div className="rounded-xl overflow-hidden aspect-video relative">
-              <Image src={post.image} alt={post.title} className="object-cover" fill />
+              <Link href={`/${post.slug}`}>
+                <Image src={post.image} alt={post.title} className="object-cover" fill />
+              </Link>
             </div>
             <Link href={`/${post.slug}`}>
               <h3 className="font-semibold text-lg">{post.title}</h3>
@@ -60,11 +72,14 @@ export default function Home() {
               {post.exceprt}
             </p>
             <div className="flex grow" />
-            <div className="flex items-center gap-2">
-              <Link href={`/${post.slug}`} className="flex grow">
-                <Button variant="outline" className="flex grow" size="sm">Read</Button>
-              </Link>
-              <Button variant="outline" title="Copy Link" size="sm"><LinkIcon size="16" /></Button>
+            <div className="flex flex-col gap-2">
+              <div className="text-sm">{dayjs(post.created).format('MMMM D, YYYY')}</div>
+              <div className="flex items-center gap-2">
+                <Link href={`/${post.slug}`} className="flex grow">
+                  <Button variant="outline" className="flex grow" size="sm">Read</Button>
+                </Link>
+                <Button variant="outline" title="Copy Link" size="sm"><LinkIcon size="16" /></Button>
+              </div>
             </div>
           </div>
         ))}
