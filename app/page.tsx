@@ -30,6 +30,15 @@ const content = [
     tags: ['Unity'],
     exceprt: 'This tutorial is going to guide you through one of the Cinemachine\'s most powerful systems - State-Driven Cameras. Which should allow you to create stunning virtual productions with almost 0 scripting.',
     image: 'https://blog.orels.sh/content/images/size/w1200/2023/02/cinemachine-blog-post-cover.png',
+  },
+  {
+    title: 'Unity Scripted Importers: Texture Generator',
+    slug: 'unity-scripted-importers-part-1-texture-generator',
+    id: 3,
+    created: '2022-06-09',
+    tags: ['Code', 'Development', 'Shaders', 'Unity', 'ScriptedImporters'],
+    exceprt: 'In this article we\'ll look into what they are and how you can use them to create a procedural Texture Generator',
+    image: 'https://blog.orels.sh/content/images/size/w1200/2022/06/Scripted-Importers-pt1.png',
   }
 ]
 

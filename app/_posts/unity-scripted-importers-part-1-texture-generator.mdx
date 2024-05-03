@@ -1,0 +1,464 @@
+---
+title: 'Unity Scripted Importers: Texture Generator'
+tags: ['Code', 'Development', 'Shaders', 'Unity', 'ScriptedImporters']
+created: '2022-06-09'
+image: 'https://blog.orels.sh/content/images/size/w1200/2022/06/Scripted-Importers-pt1.png'
+imageCredit: 'Photo by Dominik Scythe on Unsplash. Horrible edit by Yours Truly'
+imageCreditLink: 'https://unsplash.com/@drscythe?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText'
+excerpt: In this article we'll look into what they are and how you can use them to create a procedural Texture Generator
+---
+
+In this article we'll look into what they are and how you can use them to create a procedural Texture Generator
+
+---
+
+Ever since version 2019 - Unity had a very powerful tool that seemingly goes underused to this day - Scripted Importers. And while there have been several popular assets that used ScriptedImporters behind the scenes - it seems that a lot of developers are still unaware of how to harness the power of this tool for themselves.
+
+In this multi-part series, I'll go over ScriptedImporters in the context of very practical day-to-day (mostly tech art) examples. This particular part will cover the basics, by the end of it you should be able to create scripted importers on your own and will have built a Shader to Texture converter.
+
+## What are ScriptedImporters
+
+In a practical sense, `ScriptedImporters` are just C# classes that inherit from a `ScriptedImporter` class, override the `OnImportAsset` method and have the `ScriptedImporter` attribute.
+
+When an asset of the corresponding filetype is imported (or updated) - Unity will call the `OnImportAsset` method, where you should do everything needed to process the said asset into some unity-compatible type, be it something built-in from the UnityEngine namespace, like `Texture2D` or `AudioClip`, or something completely project-specific, like a `ScriptableObject` of a particular type.
+
+The content of the actual file to be used by the scripted importer can be anything, but in this particular example, we'll be working with text files, as they are the easiest to handle.
+
+<LinkEmbed
+  url="https://docs.unity3d.com/Manual/ScriptedImporters.html"
+  title="Scripted Importers"
+  description="Scripted Importers are part of the Unity Scripting API. You can use Scripted Importers to write custom Asset importers in C#..."
+  site="Unity Manual"
+  author="Scripted Importers"
+/>
+
+## Writing our first ScriptedImporter
+
+Let's start with the basics. We'll define a class that just imports a text file as is, to be used by unity as a text asset.
+
+> If you're using Unity 2019.x - you'll need to use the experimental namespace!
+
+```cs
+// Assets/Editor/FancyTextImporter.cs
+
+using System.IO;
+using UnityEngine;
+// for unity 2019
+using UnityEditor.Experimental.AssetImporters;
+// for unity 2020+
+// using UnityEditor.AssetImporters;
+
+[ScriptedImporter(1, "fancytext")]
+public class FancyTextImporter : ScriptedImporter
+{
+  public override void OnImportAsset(AssetImportContext ctx)
+  {
+
+  }
+}
+```
+
+This registers a new Scripted Importer which will process all the files with the `.fancytext` extension.
+
+Let's read the file now. Within `OnImportAsset` function add the following
+
+```cs
+var text = File.ReadAllText(ctx.assetPath);
+var asset = new TextAsset(text);
+ctx.AddObjectToAsset("Text", asset);
+ctx.SetMainObject(asset);
+```
+
+- First, we read the file
+- Then we create a new TextAsset, which is what we're going to be returning to Unity
+- Then we save this to our final asset via AddObjectToAsset
+- And finally, we tell Unity that this text asset is actually what should represent the main file
+
+> Unity allows you to nest many sub-assets via the AddObjectToAsset function, but you can only set one of them as the Main, which will act as a root of sorts
+
+Your class should look like this now
+
+```cs
+using System;
+using System.IO;
+using UnityEditor;
+using UnityEngine;
+// for unity 2019
+using UnityEditor.Experimental.AssetImporters;
+// for unity 2020+
+// using UnityEditor.AssetImporters;
+
+[ScriptedImporter(1, "fancytext")]
+public class FancyTextImporter : ScriptedImporter
+{
+  public override void OnImportAsset(AssetImportContext ctx)
+  {
+    var text = File.ReadAllText(ctx.assetPath);
+    var asset = new TextAsset(text);
+    ctx.AddObjectToAsset("Text", asset);
+    ctx.SetMainObject(asset);
+  }
+}
+```
+
+Now if you make a new `.fancytext` file anywhere in your project - unity will import it as a regular text asset, instead of just a blank unknown file. Try it out!
+
+By the way, if you need all of the full sources for reference - [you can find them on Github](https://github.com/orels1/scripted-importers-series-pt-1?ref=blog.orels.sh)!
+
+```text
+// Asssets/test.fancytext
+
+Woah, text!
+```
+
+<ZoomImage alt="Scripted Importer Inspector" src="/img/posts/unity-scripted-importers-part-1-texture-generator/image.png" />
+
+So, as you can see - it was fairly simple! We just read the text file and then created a new asset with some data from it.
+
+Unity doesn't actually care how you import the file and what data you use, but every time the contents of that file change - it will remove its existing imported data and will call your `OnImportAsset` function again.
+
+Which is its true power, you can use any format, any file extension, and technically adapt any kind of data to something unity could read by just writing a ScriptedImporter. It will essentially act as a translation layer between the actual file data and something Unity can understand. Some of the unity's own packages are built on top of this! Like the [Alembic](https://github.com/Unity-Technologies/com.unity.formats.alembic?ref=blog.orels.sh) and [USD](https://github.com/Unity-Technologies/usd-unity-sdk?ref=blog.orels.sh) importers.
+
+## Diving Deeper
+
+Let's make something a bit more fun then. We'll make an importer which reads a JSON file, and makes a primitive with the position and scale defined in that file!
+
+While it might look like an odd thing to make, imagine if you have downloaded some external data in JSON format - you could build a thing that procedurally generated some meshes out of it right at the import time.
+
+![Brain Explode](https://media.tenor.com/images/54420948d5461770ccee14d4365571ba/tenor.gif)
+
+We can start by copy-pasting our previous code and removing everything inside the `OnImportAsset` method.
+
+```cs
+// Assets/Editor/JsonPrimitiveImporter.cs
+
+using UnityEditor;
+using UnityEngine;
+// for unity 2019
+using UnityEditor.Experimental.AssetImporters;
+// for unity 2020+
+// using UnityEditor.AssetImporters;
+
+[ScriptedImporter(1, "jsonprimitive")]
+public class JsonPrimitiveImporter : ScriptedImporter
+{
+  public override void OnImportAsset(AssetImportContext ctx)
+  {
+  
+  }
+}
+```
+
+If you never worked with JSONs in unity before - first we need to define its shape as its own class.
+
+Add the following above our new `JsonPrimitiveImporter` class.
+
+```cs
+public class JsonPrimitive
+{
+  public string PrimitiveName;
+  public Vector3 Position;
+  public Vector3 Rotation;
+  public Vector3 Scale;
+}
+```
+
+Unity's built-in `JsonUtility` can parse anything that is supported by its serialization system. So we can just use `Vector3`s here directly.
+
+Now let's load that up, inside `OnImportAsset` add the following.
+
+```cs
+var info = JsonUtility.FromJson<JsonPrimitive>(File.ReadAllText(ctx.assetPath));
+```
+
+Again, just as with our `.fancytext` importer - we're simply reading a file, a JSON one in this case.
+
+Now we need to figure out which primitive type this is, since unity uses an Enum for that, and entering the whole enum name in text is lengthy.
+
+So let's set up a simple switch for this case.
+
+```cs
+var primitiveType = PrimitiveType.Cube;
+switch (info.PrimitiveName.ToLower())
+{
+  case "cube":
+    primitiveType = PrimitiveType.Cube;
+    break;
+  case "sphere":
+    primitiveType = PrimitiveType.Sphere;
+    break;
+  case "cylinder":
+    primitiveType = PrimitiveType.Cylinder;
+    break;
+  case "capsule":
+    primitiveType = PrimitiveType.Capsule;
+    break;
+}
+```
+
+Now we can create our primitive.
+
+```cs
+var primitive = GameObject.CreatePrimitive(primitiveType);
+var rotation = Quaternion.Euler(info.Rotation);
+primitive.transform.SetPositionAndRotation(info.Position, rotation);
+primitive.transform.localScale = info.Scale;
+```
+
+As you can see - since we used the `JsonUtility` - it already had proper types mapped, so we can use them directly.
+
+And now the final part - let's save this to our asset.
+
+```cs
+ctx.AddObjectToAsset("Object", primitive);
+ctx.SetMainObject(primitive);
+```
+
+Now you can make a new `.jsonprimitive` file and put this JSON into it.
+
+```json
+{
+  "PrimitiveName": "cube",
+  "Position": {
+    "x": 0.0,
+    "y": 1.0,
+    "z": 2.0
+  },
+  "Rotation": {
+    "x": 40.0,
+    "y": 60.0,
+    "z": 80.0
+  },
+  "Scale": {
+    "x": 1.0,
+    "y": 2.0,
+    "z": 3.0
+  }
+}
+```
+
+
+Which will intern create a new prefab that has a primitive in it at a position 0,1,2, with rotation 40, 60, 80, and a scale of 1,2,3 on X/Y/Z respectively.
+
+<ZoomImage alt="Importing a cube with a scripted importer" src="/img/posts/unity-scripted-importers-part-1-texture-generator/image-1.png" />
+
+![Woah](https://media.tenor.com/images/fcf944ae737ac54773f192af1074209d/tenor.gif)
+
+Now that you got a bit of a primer on the Scripted Importers - let's do the actual thing: the texture generator.
+
+## Texture Generation via Scripted Importers
+
+Generating a texture via scripted importers can be done in a variety of ways: you can use purely CPU-based methods, which will write pixels one by one - simple, but slow. We will use shaders via the very handy `Graphics.Blit` function, which allows you to render to a RenderTexture via a specified shader.
+
+So the general flow of this will be as follows.
+
+- Parse the original file with the shader code used for texture generation
+- Create a shader via a template and paste in the code we wrote
+- Create a material and textures to use for blitting
+- Save the results as the main asset data
+
+This part expects you to know some basic shader code to get the most out of it, but you should be able to follow without that as well.
+
+Let's make a new script with an empty asset importer which will process `.shadertotex` files.
+
+```cs
+using System;
+using System.IO;
+using UnityEditor;
+using UnityEngine;
+// for unity 2019
+using UnityEditor.Experimental.AssetImporters;
+// for unity 2020+
+// using UnityEditor.AssetImporters;
+
+[ScriptedImporter(1, "shaderToTex")]
+public class ShaderToTexture : ScriptedImporter
+{
+  public override void OnImportAsset(AssetImportContext ctx)
+  {
+    
+  }
+}
+```
+
+## Creating a Shader
+
+Fortunately for us, Unity exposes a very simple way to create shaders via the `ShaderUtil`. All we need is the source code and we can then use the `CreateShaderAsset` to generate the actual shader.
+
+First, let's make a super basic template that we'll paste our code into. I ended up making a new unlit shader and stripping out all the things we do not need, you can copy-paste the final template below, as it's mostly boilerplate.
+
+We'll put it into a new `Resources` folder as well, which you should make besides your new script within the `Editor` folder, as with all the other ones. If you're unfamiliar - Unity has a very handy way of loading external files you might need in your editor scripts without trying to resolve the paths yourself if you put them into the `Resources` folder.
+
+Let's call this `ShaderToTex.txt` and use it as a template. We'll use `txt` for the extension just so Unity doesn't try to process this as an actual shader.
+
+```hlsl
+Shader "Hidden/ShaderToTex"
+{
+	Properties
+	{
+	}
+	SubShader
+	{
+		Tags { "RenderType"="Opaque" }
+		LOD 100
+
+		Pass
+		{
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			
+			#include "UnityCG.cginc"
+
+			struct appdata
+			{
+				float4 vertex : POSITION;
+				float2 uv : TEXCOORD0;
+			};
+
+			struct v2f
+			{
+				float2 uv : TEXCOORD0;
+				float4 vertex : SV_POSITION;
+			};
+			
+			v2f vert (appdata v)
+			{
+				v2f o;
+				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.uv = v.uv;
+				return o;
+			}
+			
+			float4 frag (v2f i) : SV_Target
+			{
+				float4 col = float4(0.5,0.5,0.5,1);
+				#CODE#
+				return col;
+			}
+			ENDCG
+		}
+	}
+}
+```
+
+As you can see, we left a little `#CODE#` there, so we can paste in our custom code there later.
+
+Your folder structure should look something like this.
+
+<ZoomImage alt="Project Structure" src="/img/posts/unity-scripted-importers-part-1-texture-generator/image-2.png" />
+
+Now, let's read this and make it into a shader, we'll add the following to our `OnImportAsset` function.
+
+```cs
+var code = File.ReadAllText(ctx.assetPath);
+var template = Resources.Load<TextAsset>("ShaderToTex");
+var shaderCode = template.text;
+shaderCode = shaderCode.Replace("#CODE#", code);
+var shader = ShaderUtil.CreateShaderAsset(ctx, shaderCode, true);
+shader.name = "Shader";
+```
+
+Here we do a couple of things
+
+- Read the text from our `.shadertotex` file
+- Load the `ShaderToTex` from the resources folder. Since Unity natively recognizes `.txt` files as TextAssets - we can just use the generic function here
+- Inject our source code into the template
+- Use the `CreateShaderAsset` function to generate the final shader asset
+
+Since this shader only exists as the result of the asset generation - it is not easy to inspect it, so we'll also create a text asset with the contents of our `shaderCode` just so we can look at it easier (for debugging purposes).
+
+```cs
+var finalShaderSource = new TextAsset(shaderCode);
+finalShaderSource.name = "Shader Source";
+ctx.AddObjectToAsset("Shader", shader);
+ctx.AddObjectToAsset("Shader Source", finalShaderSource);
+ctx.SetMainObject(shader);
+```
+
+If you create a new `.shadertotex` file now, even without any content, you should see something like this in Unity.
+
+<ZoomImage title="Our generated shader + its source presented as a sub-asset" src="/img/posts/unity-scripted-importers-part-1-texture-generator/image-3.png" />
+
+## Using Graphics.Blit to create a Texture
+
+Now with all of this setup - we can actually make some textures!
+
+There's a lot that can be done here, in terms of formats and so on, here we'll do a simple ARGB32 texture, but you can play with the target formats as much as you'd like!
+
+First, let's set up some textures to work with. `Graphics.Blit` technically copies a `Texture2D` to a `RenderTexture` using a material, so we can't just go straight to our target. We also need to make the material which will be used for blitting.
+
+We'll add this code right above the final call to the `SetMainObject`.
+
+```cs
+var buffer = new RenderTexture(2048, 2048, 24, RenderTextureFormat.ARGB32);
+var source = new Texture2D(2048, 2048, TextureFormat.ARGB32, false, false);
+var target = new Texture2D(2048, 2048, TextureFormat.ARGB32, false, false);
+var blitter = new Material(shader);
+```
+
+Now we can do the blitting, and then read the final ReanderTexture content into our new `target`.
+
+```cs
+Graphics.Blit(source, buffer, blitter);
+RenderTexture.active = buffer;
+target.ReadPixels(new Rect(0, 0, 2048, 2048), 0, 0);
+target.Apply();
+RenderTexture.active = null;
+DestroyImmediate(source);
+DestroyImmediate(buffer);
+DestroyImmediate(blitter);
+```
+
+What we did here is called a blit to copy from `source` to `buffer` using the `blitter` material.
+
+Then we used Unity's `ReadPixels` method, which reads the value of the current `RenderTexture.active` texture and saves it into the `target`.
+
+Unity also asks us to clean up unused assets, so we call `DestroyImmediate` on all the things we will not be saving into our asset as sub-assets.
+
+With that done - we can assign our new texture as a sub-asset and also set it to be the main asset, instead of our shader.
+
+So now the last two lines of our function should look something like this.
+
+```cs
+ctx.AddObjectToAsset("Texture", target);
+ctx.SetMainObject(target);
+```
+
+If you look at your project window now - you should see the new texture in the list, instead of the shader. While the Shader should appear as a sub-asset besides its source.
+
+<ZoomImage alt="Generated Image Inspector" src="/img/posts/unity-scripted-importers-part-1-texture-generator/image-4.png" />
+
+As per our default shader, the texture is currently just a grey (0.5, 0.5, 0.5) color.
+
+In this last step - let's output something! Within our code, we can access the fragment inputs, like the UV coordinates, which are super handy for creating gradients.
+
+If you add this to your `.shadrtotex` file, your texture should become a linear black-to-white gradient!
+
+```hlsl
+col.rgb = i.uv.xxx;
+```
+
+<ZoomImage alt="Generated Gradient" src="/img/posts/unity-scripted-importers-part-1-texture-generator/image-5.png" />
+
+![Magic!](https://media.tenor.com/images/53e0f9e44d8d2b938cfa174ca799fdbf/tenor.gif)
+
+Now you can code whatever you want here and create all sorts of procedural textures which are immediately baked. They also act as regular texture assets and can be used within other scripts and materials!
+
+For example, you can use this code instead to make this odd donut thing.
+
+```hlsl
+half radial = 1 - length(abs(i.uv.xy) - 0.5) * 2;
+half donut = sin(radial * 4);
+half3 pink = half3(0.7, 0.2, 0.89);
+half frostingMask = smoothstep(0.9, 0.91, donut);
+col.rgb = lerp(0, lerp(pink, 1, frostingMask), donut);
+```
+
+<ZoomImage alt="Pink Donut" src="/img/posts/unity-scripted-importers-part-1-texture-generator/image-6.png" />
+
+Hope you can see how powerful this is even with these basic demos!
+
+Since this is just a shader, you can extend it by passing in textures, cubemaps, float/color properties, and so on.
+
+If you want to see how far you can take this - check out [Keijiro's Metatex](https://github.com/keijiro/Metatex/tree/main/Packages/jp.keijiro.metatex?ref=blog.orels.sh)! Which is built using the exact same flows.
