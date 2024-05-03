@@ -20,11 +20,11 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={inter.className}>
         <div className="flex min-h-screen flex-col">
-        <nav className="w-full py-4 px-4 flex items-center gap-4 justify-between border-b-[1px]">
+        <nav className="w-full py-4 px-4 flex items-center gap-4 justify-between border-b-[1px] border-b-zinc-700">
           <div className="flex items-center gap-6">
-            <Link href="/" className="hover:text-accent-foreground">Blog</Link>
-            <Link href="https://tips.orels.sh" className="hover:text-accent-foreground">Knowledge Base</Link>
-            <Link href="https://github.com/orels1" className="hover:text-accent-foreground">GitHub</Link>
+            <Link href="/" className="hover:text-sky-500">Blog</Link>
+            <Link href="https://tips.orels.sh" className="hover:text-sky-500">Knowledge Base</Link>
+            <Link href="https://github.com/orels1" className="hover:text-sky-500">GitHub</Link>
           </div>
         </nav>
         <main>

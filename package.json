@@ -23,9 +23,11 @@
     "next-mdx-remote": "^4.4.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-medium-image-zoom": "^5.2.0",
     "react-twitter-embed": "^4.0.4",
     "rehype-slug": "^6.0.0",
     "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.0",
     "remark-mdx-frontmatter": "^4.0.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7"

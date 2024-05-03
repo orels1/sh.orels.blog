@@ -24,7 +24,7 @@ const content = [
   },
   {
     title: 'You should probably be using Cinemachine',
-    slug: '2023-year-in-review',
+    slug: 'you-should-probably-be-using-cinemachine',
     id: 2,
     created: '2023-02-08',
     tags: ['Unity'],
@@ -53,9 +53,9 @@ export default function Home() {
             <div className="flex grow" />
             <div className="flex items-center gap-2">
               <Link href={`/${post.slug}`} className="flex grow">
-                <Button variant="secondary" className="flex grow" size="sm">Read</Button>
+                <Button variant="outline" className="flex grow" size="sm">Read</Button>
               </Link>
-              <Button variant="secondary" title="Copy Link" size="sm"><LinkIcon size="16" /></Button>
+              <Button variant="outline" title="Copy Link" size="sm"><LinkIcon size="16" /></Button>
             </div>
           </div>
         ))}

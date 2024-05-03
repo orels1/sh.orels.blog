@@ -8,9 +8,14 @@ import Image from 'next/image';
 import { LinkIcon } from 'lucide-react';
 import rehypeSlug from 'rehype-slug';
 import rehypePrism from '@mapbox/rehype-prism';
+import remarkGfm from 'remark-gfm';
 import BunnyVideo from '@/components/BunnyVideo';
 import YouTube from '@/components/YouTube';
 import LinkEmbed from '@/components/LinkEmbed';
+import Collapsible from '@/components/Collapsible';
+import ZoomImage from '@/components/ZoomImage';
+import { Suspense } from 'react';
+import StackedImages from '@/components/StackedImages';
 
 
 export async function generateStaticParams()
@@ -38,11 +43,17 @@ const components = (slug: string) => ({
   h3: (props: any) => <Link href={`/${slug}/#${props.id}`} className="no-underline hover:text-accent-foreground transition-colors [&_h3]:hover:text-accent-foreground [&_h3]:transition-colors group flex items-center" scroll><h3 {...props} /></Link>,
   h4: (props: any) => <Link href={`/${slug}/#${props.id}`} className="no-underline hover:text-accent-foreground transition-colors [&_h4]:hover:text-accent-foreground [&_h4]:transition-colors group flex items-center" scroll><h4 {...props} /></Link>,
   pre: (props: any) => <pre {...props} className={cn(props.className, "rounded-md my-4")} />,
+  code: (props: any) => <code {...props} className={cn(props.className, "font-mono")} />,
   blockquote: (props: any) => <blockquote {...props} className={cn(props.className, "ring-inset ring-1 ring-white/10 bg-white/10 rounded-md px-4 my-4 py-[1px]")} />,
   p: (props: any) => <p {...props} className={cn(props.className, "")} />,
   ul: (props: any) => <ul {...props} className={cn(props.className, "")} />,
   li: (props: any) => <li {...props} className={cn(props.className, "")} />,
   a: (props: any) => <Link {...props} className={cn(props.className, "hover:text-accent-foreground no-underline hover:underline underline-offset-2")} />,
+  table: (props: any) => <table {...props} className={cn(props.className, "table-auto w-full my-4")} />,
+  th: (props: any) => <th {...props} className={cn(props.className, "border-b border-white/10 px-4 py-2")} />,
+  td: (props: any) => <td {...props} className={cn(props.className, "border-b border-white/10 px-4 py-2")} />,
+  tr: (props: any) => <tr {...props} className={cn(props.className, "")} />,
+  thead: (props: any) => <thead {...props} className={cn(props.className, "")} />,
   img: (props: any) => (
     <span className="flex items-center flex-col my-4">
       <img {...props} className={cn(props.className, "rounded-md mb-2")} />
@@ -55,6 +66,9 @@ const components = (slug: string) => ({
   BunnyVideo,
   YouTube,
   LinkEmbed,
+  Collapsible,
+  ZoomImage,
+  StackedImages,
 });
 
 export default async function Page({
@@ -97,6 +111,7 @@ export default async function Page({
             options={{ 
               parseFrontmatter: true,
               mdxOptions: {
+                remarkPlugins: [],
                 rehypePlugins: [
                   rehypeSlug,
                   rehypePrism,
