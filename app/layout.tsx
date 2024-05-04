@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     description: 'orels1 types words... and you read them',
     title: 'orels\' Blog',
     siteName: 'orels\' Blog',
-    images: '/orels-tips-splash.png',
+    images: '/orels-blog-splash.png',
   },
   twitter: {
     site: '@orels1_',
