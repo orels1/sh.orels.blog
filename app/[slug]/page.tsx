@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, shuffle } from '@/lib/utils';
 import Link from 'next/link';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -16,6 +16,7 @@ import ZoomImage from '@/components/ZoomImage';
 import StackedImages from '@/components/StackedImages';
 import { Metadata, ResolvingMetadata } from 'next';
 import dayjs from 'dayjs';
+import contentMap from '@/app/content-map.json';
 
 
 export async function generateStaticParams()
@@ -131,14 +132,29 @@ export default async function Page({
     image: string;
     imageCredit?: string;
     imageCreditLink?: string;
+    excerpt: string;
   }>({
     source: content,
     options: { parseFrontmatter: true }
   });
 
+  const mainTag = (mdx.frontmatter.tags?.[0]?.toLowerCase() ?? 'unity') as unknown as keyof typeof contentMap;
+  
+  let relatedPosts: Array<{ title: string; slug: string; created: string; tags: string[]; excerpt: string; }> = [];
+  if (mainTag) {
+    relatedPosts = contentMap?.[mainTag]?.filter(post => post.slug != slug).map(post => ({
+      title: post.frontmatter.title,
+      tags: post.frontmatter.tags,
+      slug: post.slug,
+      created: post.frontmatter.created,
+      excerpt: post.frontmatter.excerpt,
+    })) ?? [];
+    shuffle(relatedPosts);
+  }
+
   return (
     <div className="flex flex-row flex-wrap gap-12 grow">
-      <div className="flex flex-col">
+      <div className="flex flex-col max-w-3xl">
         <h1 className="text-3xl font-bold mb-4">{mdx.frontmatter.title}</h1>
         <div className="relative rounded-lg overflow-hidden my-4 aspect-video">
           <Image src={mdx.frontmatter.image} alt={mdx.frontmatter.title} className="object-cover" fill />
@@ -148,7 +164,7 @@ export default async function Page({
             <Link href={mdx.frontmatter.imageCreditLink ?? '#'} target="_blank" className="hover:underline underline-offset-2">{mdx.frontmatter.imageCredit}</Link>
           </div>
         )}
-        <div className="prose dark:prose-invert prose-lg">
+        <div className="prose max-w-3xl dark:prose-invert prose-lg">
           <MDXRemote
             source={content}
             options={{ 
@@ -165,19 +181,35 @@ export default async function Page({
           />
         </div>
       </div>
-      <div className="flex flex-col grow gap-6 max-w-[400px]">
+      <div className="flex flex-col flex-shrink-0 gap-6 max-w-[350px]">
         <div className="rounded-xl ring-1 dark:ring-white/10 ring-slate-300 p-4 flex flex-col gap-4">
           <div>{dayjs(mdx.frontmatter.created).format('MMMM D, YYYY')}</div>
           <div className="flex flex-row gap-3 flex-wrap">
             {mdx.frontmatter.tags?.map(tag => (
-              <div key={tag} className="rounded-md dark:bg-white/10 bg-zinc-300 dark:text-white/80 text-zinc-800 px-4 py-1">
+              <Link href={`/t/${tag.toLowerCase()}`} key={tag} className="rounded-md dark:bg-white/10 bg-zinc-300 dark:text-white/80 text-zinc-800 px-4 py-1">
                 {tag}
-              </div>
+              </Link>
             ))}
           </div>
         </div>
-        <h2 className="text-lg font-semibold mt-6">Continue Reading</h2>
-        <div>Other posts here...</div>
+        {relatedPosts.length > 0 && (
+          <h2 className="text-lg font-semibold mt-6">Continue Reading</h2>
+        )}
+        <div className="flex flex-col gap-4">
+          {relatedPosts.map(post => (
+            <Link key={post.slug} className="group" href={`/${post.slug}`}>
+              <div className="rounded-xl ring-1 dark:ring-white/10 ring-slate-300 p-4 gap-2 flex flex-col">
+                <h3 className="font-semibold dark:group-hover:text-sky-500 group-hover:text-sky-600 text-lg">{post.title}</h3>
+                <p className="text-sm font-light">
+                  {(post.excerpt?.length ?? 0) > 100 ? post.excerpt?.slice(0, 150) + '...' : post.excerpt}
+                </p>
+                <div className="text-sm">
+                  {dayjs(post.created).format('MMMM D, YYYY')}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   )
