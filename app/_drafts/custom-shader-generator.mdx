@@ -1,0 +1,61 @@
+# Custom Shader Generator
+
+Generating shaders with scripted importers
+
+## Scripted Importer side
+
+- Create your shader text content (somehow)
+- Use `ShaderUtil.CreateShaderAsset(ctx, <sourceString>, true)`
+- Check for shader compilation errors using `ShaderUtil.ShaderHasError(shader)`
+- If there are errors - you can get them via `ShaderUtil.GetShaderMessages(shader)` and do with that what you will (i simply `ctx.LogImportError()` each message)
+- If there are no errors - you should call `ShaderUtil.ClearShaderMessages(shader)`
+- Now you can `ctx.AddObjectToAsset("Some Name", shader)`
+- And dont forget to `ctx.SetMainObject(shader)`
+
+Now that you have a proper shader asset - it actually needs to be registered! Otherwise it wont work correctly
+
+## Asset Post Processor side
+
+We need to utilize an asset post processor to register and refresh shader issues on further recompilations
+
+- Hook into `OnPostProcessAllAssets` to get all the update assets
+- Loop through `importedAssets` `string[]` that is an array of asset paths
+- You can skip any asset that doesnt end in your file extension, `.orlshader` in my case
+- You can then load your shader from the asset with `AssetDatabase.LoadAssetAtPath<Shader>(asset)`
+- You now should clear the messages and check for errors again. If you do not clear - the older error messages will still be stuck in the shader inspector and thats no good
+- Use `ShaderUtil.ClearShaderMessages(shader)` to do so
+- Then check for errors again using `ShaderUtil.ShaderHasError(shader)`
+- And if not - call `ShaderUtil.RegisterShader(shader)` which will make it so your shader actually appears in the shader dropdown
+
+The final code looks smth like thisusing UnityEditor;
+
+```cs
+using UnityEngine;
+
+namespace ORL.ShaderGenerator
+{
+    public class ORLAssetPostProcessor : AssetPostprocessor
+    {
+        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets,
+            string[] movedFromAssetPaths)
+        {
+            SetupORLShaders(importedAssets);
+        }
+
+        private static void SetupORLShaders(string[] assets)
+        {
+            foreach (var asset in assets)
+            {
+                if (!asset.EndsWith(".orlshader")) continue;
+
+                var shader = AssetDatabase.LoadAssetAtPath<Shader>(asset);
+                ShaderUtil.ClearShaderMessages(shader);
+                if (!ShaderUtil.ShaderHasError(shader))
+                {
+                    ShaderUtil.RegisterShader(shader);
+                }
+            }
+        }
+    }
+}
+```
