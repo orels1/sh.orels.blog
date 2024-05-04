@@ -7,6 +7,7 @@ import DarkmodeToggle from "@/components/DarkmodeToggle";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { TwitterIcon } from "lucide-react";
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -57,6 +58,7 @@ export default function RootLayout({
           <main>
             <div className="relative mx-auto max-w-screen-xl gap-x-6 px-4 py-10 md:flex md:flex-row md:py-10">
               {children}
+              <Analytics />
             </div>
           </main>
           <footer className="mt-6 border-t-[1px] border-t-zinc-200 dark:border-t-zinc-700">
