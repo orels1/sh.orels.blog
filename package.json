@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "cd utils &&  node ./register-commands.mjs && cd .. && next build",
+    "build": "cd utils &&  node ./content-map.mjs && cd .. && next build",
     "start": "next start",
     "lint": "next lint"
   },
