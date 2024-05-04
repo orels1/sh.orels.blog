@@ -23,7 +23,7 @@ export default function CopyButton({
   return (
     <TooltipProvider>
       <Tooltip open={open}>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <Button onClick={handleCopyClick} variant="outline" title="Copy Link" size="sm"><LinkIcon size="16" /></Button>
         </TooltipTrigger>
         <TooltipContent>
