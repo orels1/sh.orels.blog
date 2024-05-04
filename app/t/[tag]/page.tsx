@@ -1,6 +1,15 @@
 import contentMap from '@/app/content-map.json';
 import PostCard from '@/components/PostCard';
 
+export async function generateStaticParams()
+{
+  return Object.keys(contentMap).map((tag) => {
+    return {
+      tag: encodeURIComponent(tag.toLowerCase()),
+    }
+  });
+}
+
 export default function TagPage({
   params: {
     tag,
