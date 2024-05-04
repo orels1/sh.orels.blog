@@ -1,9 +1,7 @@
 import PostCard from "@/components/PostCard";
-import { Button } from "@/components/ui/button";
-import dayjs from "dayjs";
-import { LinkIcon } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { compileMDX } from "next-mdx-remote/rsc";
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 const content = [
   {
@@ -53,7 +51,37 @@ const content = [
   }
 ]
 
-export default function Home() {
+export default async function Home() {
+  const postPaths = (await fs.readdir(path.join('app', '_posts'))).filter((postFilePath) => {
+    return path.extname(postFilePath).toLowerCase() === ".mdx";
+  });
+
+  const postSlugs = postPaths.map((tipPath) => tipPath.slice(0, -4));
+
+  const pagesData = await Promise.all(postSlugs.map(async (slug) => {
+    const content = await fs.readFile(path.join('app', '_posts', slug + '.mdx'), 'utf-8');
+    const mdx = await compileMDX<{
+      title: string;
+      tags: string[];
+      created: string;
+      updated: string;
+      excerpt: string;
+      image: string;
+    }>({
+      source: content,
+      options: { parseFrontmatter: true }
+    });
+
+    return mdx;
+  }));
+
+  const content = pagesData
+    .map((page, index) => ({
+      ...page.frontmatter,
+      slug: postSlugs[index]
+    }))
+    .sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime());
+
   return (
     <div className="flex flex-col w-full">
       <h1 className="text-3xl font-bold">orels1 types words...</h1>

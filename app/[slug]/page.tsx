@@ -129,6 +129,7 @@ export default async function Page({
     title: string;
     tags?: string[];
     created: string;
+    updated?: string;
     image: string;
     imageCredit?: string;
     imageCreditLink?: string;
@@ -184,9 +185,12 @@ export default async function Page({
       <div className="flex flex-col flex-shrink-0 gap-6 max-w-[350px]">
         <div className="rounded-xl ring-1 dark:ring-white/10 ring-slate-300 p-4 flex flex-col gap-4">
           <div>{dayjs(mdx.frontmatter.created).format('MMMM D, YYYY')}</div>
+          {mdx.frontmatter.updated && (
+            <div>Updated: {dayjs(mdx.frontmatter.updated).format('MMMM D, YYYY')}</div>
+          )}
           <div className="flex flex-row gap-3 flex-wrap">
             {mdx.frontmatter.tags?.map(tag => (
-              <Link href={`/t/${tag.toLowerCase()}`} key={tag} className="rounded-md dark:bg-white/10 bg-zinc-300 dark:text-white/80 text-zinc-800 px-4 py-1">
+              <Link href={`/t/${tag.toLowerCase()}`} key={tag} className="rounded-md dark:bg-white/10 bg-zinc-300 dark:text-white/80 dark:hover:bg-white/20 text-zinc-800 hover:bg-zinc-400 transition-colors px-4 py-1">
                 {tag}
               </Link>
             ))}
