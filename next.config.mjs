@@ -10,7 +10,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'blog.orels.sh',
         port: '',
-        pathname: '/content/images/**',
+        pathname: '/img/**',
       },
     ],
   },
