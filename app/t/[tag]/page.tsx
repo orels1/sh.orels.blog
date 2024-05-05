@@ -5,7 +5,7 @@ export async function generateStaticParams()
 {
   return Object.keys(contentMap).map((tag) => {
     return {
-      tag: encodeURIComponent(tag.toLowerCase()),
+      tag: tag.toLowerCase(),
     }
   });
 }
