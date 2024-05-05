@@ -17,7 +17,7 @@ export const getPostsSlugs = async () => {
 
 
 export const getMDXContent = async (slug) => {
-  const text = await fs.readFile(path.join('../', 'app', '_posts', slug + '.mdx'), 'utf-8');
+  const text = await fs.readFile(path.join('../', 'app', '_posts', `${slug}.mdx`), 'utf-8');
   const { frontmatter } = await compileMDX({
     source: text,
     options: { parseFrontmatter: true }
